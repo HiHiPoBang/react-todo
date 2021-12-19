@@ -1,0 +1,10 @@
+.TodoList{
+  padding: 15px;
+  width: 20%;
+  border: 1px solid #dddddd;
+  &__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+}
