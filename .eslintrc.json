@@ -42,7 +42,9 @@
     "no-use-before-define": "off",
     "func-names": ["error", "as-needed"],
     "@typescript-eslint/no-use-before-define": ["error"],
-    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+    "react/prop-types": "off",
+    "no-unused-vars": "off"
   }
 }
 
