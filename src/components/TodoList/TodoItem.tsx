@@ -1,24 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyledH5 } from '../../styled-components';
+import { TodoObjInterface } from './todoUtils';
 
 const TodoItem = function ({
-  item = {
-    id: '' as string,
-    title: '' as string,
-    desc: '' as string,
-    type: '' as string,
-  },
+  item = {} as TodoObjInterface,
 }) {
   const {
-    id, title, desc, type,
+    id, label, type,
   } = item;
   return (
     <li className={type}>
       <div>
-        <StyledH5>{title}</StyledH5>
+        <span>{label}</span>
         <span>{id}</span>
-        <p>{desc}</p>
       </div>
     </li>
   );

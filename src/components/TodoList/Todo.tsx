@@ -1,29 +1,20 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import * as R from 'ramda';
-import './TodoList.scss';
+import './Todo.scss';
+import { TodoObjInterface } from './todoUtils';
 import { StyledH2, StyledInput, StyledButton } from '../../styled-components';
-import TodoItem from '../TodoItem';
-
-interface TodoObjInterface {
-  id: string,
-  title: string,
-  desc: string
-  type: string
-}
+import TodoItem from './TodoItem';
 
 const TodoList = function (props: {
   list: TodoObjInterface[],
-  handleSubmit: (param: any) => void,
+  addTodoItem: (param: any) => void,
 }) {
-  const { list, handleSubmit } = props;
-  const [stateTitle, setTitle] = useState('');
-  const [stateDesc, setDesc] = useState('');
+  const { list, addTodoItem } = props;
+  const [stateLabel, setLabel] = useState('');
   const handleFormBeforeSubmit = (e: any) => {
     e.preventDefault();
-    handleSubmit({ title: stateTitle, desc: stateDesc, type: 'default' });
-    setTitle('');
-    setDesc('');
+    addTodoItem({ label: stateLabel, type: 'default' });
+    setLabel('');
   };
   return (
     <div className="TodoList">
@@ -38,13 +29,9 @@ const TodoList = function (props: {
       </ul>
       <form onSubmit={handleFormBeforeSubmit}>
         <StyledInput
-          placeholder="Untitled"
-          value={stateTitle}
-          onChange={(event) => setTitle(event.target.value)}
-        />
-        <StyledInput
-          value={stateDesc}
-          onChange={(event) => setDesc(event.target.value)}
+          placeholder="Unlabeld"
+          value={stateLabel}
+          onChange={(event) => setLabel(event.target.value)}
         />
         <StyledButton type="submit">Add</StyledButton>
       </form>
