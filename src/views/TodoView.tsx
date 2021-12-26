@@ -17,7 +17,7 @@ const listData = [
 const todosData = [{ todoId: nanoid(), title: 'Untitled Todo', todo: [...listData] }];
 
 const handleException = (msg: string) => {
-  console.warn(`Warning: ${msg}`);
+  throw new Error(`Warning: ${msg}`);
 };
 const TodoView = function () {
   const [todos, setTodos] = useState(todosData);
