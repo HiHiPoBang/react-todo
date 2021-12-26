@@ -1,18 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TodoObjInterface } from './todoUtils';
+import { TodoItemInterface } from './todoUtils';
+import { StyledButton } from '../../styled-components';
 
-const TodoItem = function ({
-  item = {} as TodoObjInterface,
+const TodoItem = function (props: {
+  item: TodoItemInterface,
+  deleteItem: (param: any) => void,
 }) {
   const {
-    id, label, type,
-  } = item;
+    item: { id, label, type },
+    deleteItem,
+  } = props;
   return (
     <li className={type}>
       <div>
         <span>{label}</span>
-        <span>{id}</span>
+        <StyledButton onClick={() => deleteItem(id)}>delete</StyledButton>
       </div>
     </li>
   );

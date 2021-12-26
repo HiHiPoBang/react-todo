@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './Todo.scss';
-import { TodoObjInterface } from './todoUtils';
+import { TodoItemInterface, DeleteTodoItemInterface } from './todoUtils';
 import { StyledH2, StyledInput, StyledButton } from '../../styled-components';
 import TodoItem from './TodoItem';
 
 const TodoList = function (props: {
-  list: TodoObjInterface[],
+  todoId: string,
+  todo: TodoItemInterface[],
   addTodoItem: (param: any) => void,
+  deleteTodoItem: (param: DeleteTodoItemInterface) => void,
+  deleteTodo: () => void
 }) {
-  const { list, addTodoItem } = props;
+  const {
+    todoId, todo, addTodoItem, deleteTodoItem, deleteTodo,
+  } = props;
   const [stateLabel, setLabel] = useState('');
   const handleFormBeforeSubmit = (e: any) => {
     e.preventDefault();
@@ -18,12 +23,14 @@ const TodoList = function (props: {
   };
   return (
     <div className="TodoList">
+      <StyledButton onClick={() => deleteTodo()}>X</StyledButton>
       <StyledH2>My Todo</StyledH2>
       <ul className="TodoList__list">
-        { list.map((item) => (
+        { todo.map((item) => (
           <TodoItem
             key={item.id}
             item={item}
+            deleteItem={(id: string) => deleteTodoItem({ todoId, id })}
           />
         ))}
       </ul>
