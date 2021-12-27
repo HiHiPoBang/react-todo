@@ -1,9 +1,12 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import App from '../App';
+import TodoView from '../views/TodoView';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/hello/i);
-  expect(linkElement).toBeInTheDocument();
+test('ShallowMount App ', () => {
+  const renderer = ShallowRenderer.createRenderer();
+  renderer.render(<App />);
+  const result = renderer.getRenderOutput();
+  expect(result.type).toBe('div');
+  expect(result.props.children).toEqual(<TodoView />);
 });
