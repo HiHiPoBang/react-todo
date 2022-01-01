@@ -4,8 +4,8 @@ import TodoView from './views/TodoView';
 
 const App = function () {
   return (
-    <div className="App">
-      <TodoView />
+    <div className="App" data-qa="App">
+      <TodoView data-qa="App_todoView" />
     </div>
   );
 };
