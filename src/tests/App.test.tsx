@@ -1,12 +1,14 @@
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import { shallow } from 'enzyme';
 import App from '../App';
 import TodoView from '../views/TodoView';
 
-test('ShallowMount App ', () => {
-  const renderer = ShallowRenderer.createRenderer();
-  renderer.render(<App />);
-  const result = renderer.getRenderOutput();
-  expect(result.type).toBe('div');
-  expect(result.props.children).toEqual(<TodoView />);
+describe('Render', () => {
+  const wrapper = shallow(<App />);
+  test('App ', () => {
+    expect(wrapper.find('[data-qa="App"]').length).toEqual(1);
+  });
+  test('SubComponents ', () => {
+    expect(wrapper.find('[data-qa="App_todoView"]').length).toEqual(1);
+  });
 });
