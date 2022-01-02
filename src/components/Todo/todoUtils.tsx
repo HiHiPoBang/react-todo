@@ -6,7 +6,12 @@ export interface TodoItemInterface {
   label: string,
   type: string
 }
-export interface TodoItemContentInterface {
+export interface TodoInterface {
+  todoId: string,
+  title: string,
+  todo: TodoItemInterface[]
+}
+export interface CreateTodoItemInterface {
   label: string,
   type: string,
 }
@@ -22,4 +27,11 @@ export const createNewTodo = (val: TodoItemInterface) => ({
   title: 'Untitled todo',
   todo: [val],
 });
-export const createNewTodoItem = (val: TodoItemContentInterface) => R.merge({ id: nanoid() }, val);
+export const createNewTodoItem = (val: CreateTodoItemInterface) => R.merge({ id: nanoid() }, val);
+
+export const findTodoIndexByTodoId = (todos: TodoInterface[], todoId: string) => {
+  const todoIdx = R.findIndex(R.propEq('todoId', todoId))(todos) as any;
+  return R.equals(todoIdx, -1)
+    ? handleException('item is not existed')
+    : todoIdx;
+};

@@ -6,14 +6,13 @@ import { XIcon, PlusIcon } from '@primer/octicons-react';
 import {
   BORDER_COLOR, SECONDARY_COLOR, H4_FONT_SIZE, convertRemToPixel,
 } from '../../styled-components/commonVariable';
-import { TodoItemInterface, DeleteTodoItemInterface } from './todoUtils';
+import { TodoItemInterface, CreateTodoItemInterface, DeleteTodoItemInterface } from './todoUtils';
 import { StyledH2, StyledInput, StyledButton } from '../../styled-components';
 import TodoItem from './TodoItem';
 
 const TodoContainer = styled.div`
-  margin: 5px 10px;
-  width: 20%;
-  min-width: 320px;
+  min-width: 400px;
+  max-width: 400px;
   border: 1px solid ${BORDER_COLOR};
   background: ${SECONDARY_COLOR};
 `;
@@ -22,8 +21,8 @@ const Todo = function (props: {
   todoId: string,
   title: string,
   todo: TodoItemInterface[],
-  addTodoItem: (param: any) => void,
-  updateTodoItem: (param: TodoItemInterface) => void,
+  addTodoItem: (param: { todoId: string, todoItem: CreateTodoItemInterface }) => void,
+  updateTodoItem: (param: { todoId: string, todoItem: TodoItemInterface }) => void,
   deleteTodoItem: (param: DeleteTodoItemInterface) => void,
   deleteTodo: () => void
 }) {
@@ -33,7 +32,8 @@ const Todo = function (props: {
   const [newItemLabel, setNewItemLabel] = useState('');
   const handleFormBeforeSubmit = (e: any) => {
     e.preventDefault();
-    addTodoItem({ label: newItemLabel, type: 'default' });
+    const todoItem = { label: newItemLabel, type: 'default' } as CreateTodoItemInterface;
+    addTodoItem({ todoId, todoItem });
     setNewItemLabel('');
   };
   return (
@@ -55,7 +55,9 @@ const Todo = function (props: {
             <TodoItem
               key={item.id}
               item={item}
-              updateItem={(val: TodoItemInterface) => updateTodoItem(val)}
+              updateItem={
+                (todoItem: TodoItemInterface) => updateTodoItem({ todoId, todoItem })
+              }
               deleteItem={(id: string) => deleteTodoItem({ todoId, id })}
             />
           ))}

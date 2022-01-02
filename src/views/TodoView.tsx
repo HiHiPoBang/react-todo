@@ -3,12 +3,14 @@ import * as R from 'ramda';
 import { nanoid } from 'nanoid';
 import './TodoView.scss';
 import {
+  TodoInterface,
   TodoItemInterface,
   DeleteTodoItemInterface,
-  TodoItemContentInterface,
+  CreateTodoItemInterface,
   handleException,
   createNewTodo,
   createNewTodoItem,
+  findTodoIndexByTodoId,
 } from '../components/Todo/todoUtils';
 import Todo from '../components/Todo/Todo';
 import { StyledButton } from '../styled-components';
@@ -25,7 +27,9 @@ const todosData = [{ todoId: nanoid(), title: 'Untitled Todo', todo: [...listDat
 
 const TodoView = function () {
   const [todos, setTodos] = useState(todosData);
-  const addTodoItem = (param: TodoItemContentInterface, todoIdx: number) => {
+  const [rowNumber, setRowNumber] = useState(3);
+  const addTodoItem = ({ todoId = '', todoItem = {} as CreateTodoItemInterface }) => {
+    const todoIdx = findTodoIndexByTodoId(todos, todoId);
     const todoObj = todos[todoIdx];
 
     R.pipe(
@@ -33,10 +37,11 @@ const TodoView = function () {
       (newItem) => ({ ...todoObj, todo: [...todoObj.todo, newItem] }),
       (newList) => R.update(todoIdx, newList, todos),
       (newTodos) => setTodos(newTodos),
-    )(param);
+    )(todoItem);
   };
-  const updateTodoItem = (param: TodoItemInterface, todoIdx: number) => {
-    const { id } = param;
+  const updateTodoItem = ({ todoId = '', todoItem = {} as TodoItemInterface }) => {
+    const { id } = todoItem;
+    const todoIdx = findTodoIndexByTodoId(todos, todoId);
     const todoObj = todos[todoIdx];
     const itemIdx = R.findIndex(R.propEq('id', id))(todoObj.todo);
 
@@ -46,10 +51,11 @@ const TodoView = function () {
         (item) => R.update(itemIdx, item, todoObj.todo),
         (newTodo) => R.update(todoIdx, { ...todoObj, todo: newTodo }, todos),
         (newTodos) => setTodos(newTodos),
-      )(param);
+      )(todoItem);
   };
-  const deleteTodoItem = (param: DeleteTodoItemInterface, todoIdx: number) => {
-    const { id } = param;
+  const deleteTodoItem = (param: DeleteTodoItemInterface) => {
+    const { todoId, id } = param;
+    const todoIdx = findTodoIndexByTodoId(todos, todoId);
     const todoObj = todos[todoIdx];
     const itemIdx = R.findIndex(R.propEq('id', id))(todoObj.todo);
 
@@ -69,23 +75,29 @@ const TodoView = function () {
     (param) => createNewTodoItem(param),
     (newItem) => createNewTodo(newItem),
     (newTodo) => setTodos([...todos, newTodo]),
-  )({ label: 'untitled item', type: 'default' });
+  )({ label: `untitled item${todos.length}`, type: 'default' });
   return (
     <div className="TodoView" data-qa="todo-view">
       <main className="TodoView__main">
         {
-          todos.map((todoObj, todoIdx) => (
-            <Todo
-              data-qa={`todo-${todoIdx}`}
-              key={todoObj.todoId}
-              todoId={todoObj.todoId}
-              title={todoObj.title}
-              todo={todoObj.todo}
-              addTodoItem={(val: TodoItemContentInterface) => addTodoItem(val, todoIdx)}
-              updateTodoItem={(val: TodoItemInterface) => updateTodoItem(val, todoIdx)}
-              deleteTodoItem={(val: DeleteTodoItemInterface) => deleteTodoItem(val, todoIdx)}
-              deleteTodo={() => deleteTodo(todoIdx)}
-            />
+          Array(rowNumber).fill(0).map((number, idx) => (
+            <div className="TodoView__column" key={number}>
+              {
+                todos.filter((_, todoIdx) => todoIdx % rowNumber === idx)
+                  .map((todoObj, todoIdx) => (
+                    <Todo
+                      key={todoObj.todoId}
+                      todoId={todoObj.todoId}
+                      title={todoObj.title}
+                      todo={todoObj.todo}
+                      addTodoItem={(val) => addTodoItem(val)}
+                      updateTodoItem={(val) => updateTodoItem(val)}
+                      deleteTodoItem={(val) => deleteTodoItem(val)}
+                      deleteTodo={() => deleteTodo(todoIdx)}
+                    />
+                  ))
+              }
+            </div>
           ))
         }
       </main>
