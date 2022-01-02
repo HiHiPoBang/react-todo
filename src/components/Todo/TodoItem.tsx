@@ -3,34 +3,97 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { CheckIcon, PencilIcon, TrashIcon } from '@primer/octicons-react';
-import { BORDER_COLOR, H6_FONT_SIZE, PRIMARY_FONT_COLOR } from '../../styled-components/commonVariable';
+import {
+  WHITE_COLOR,
+  PRIMARY_COLOR,
+  BORDER_COLOR,
+  H6_FONT_SIZE,
+  PRIMARY_FONT_COLOR,
+  SECONDARY_COLOR,
+} from '../../styled-components/commonVariable';
 import { TodoItemInterface } from './todoUtils';
 import { StyledInput, StyledButton } from '../../styled-components';
 
+interface CheckedLabelProps {
+  isChecked: boolean
+}
+const TodoItemContainer = styled.li`
+  padding: 5px 10px;
+  box-sizing: border-box;
+  transition: background-color .3s;
+  &:hover{
+    background-color: ${WHITE_COLOR};
+  }
+`;
 const TodoItemLabel = styled.label`
+  position: relative;
   flex-grow: 1;
   height: 100%;
-  padding: 0px 5px;
-  border-bottom: 1px solid ${BORDER_COLOR};
+  padding: 0px 5px 0px 1.75rem;
   overflow:hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: ${H6_FONT_SIZE};
   color: ${PRIMARY_FONT_COLOR};
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 1.75rem;
+    width: ${(props: CheckedLabelProps) => (props.isChecked ? '100%' : '0px')};
+    height: 2px;
+    background-color: ${BORDER_COLOR};
+    opacity: .5;
+    transition: width .3s;
+  }
 `;
 const TodoItemInput = styled(StyledInput)`
   flex-grow: 1;
   padding: 0 5px;
   font-size: ${H6_FONT_SIZE};
 `;
+const TodoItemCheckboxSpan = styled.span`
+  position: absolute;
+  top: 1.5px;
+  left: 0px;
+  display: inline-block;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 2px;
+  border: 1px solid ${BORDER_COLOR};
+  background: ${WHITE_COLOR};
+  transition: background 0.3s;
+  i {
+    position: absolute;
+    top: -7px;
+    left: 1px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+`;
+const TodoItemCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: none;
+  &:checked + span {
+    background: ${PRIMARY_COLOR};
+    color: ${WHITE_COLOR};
+  }
+  &:checked + span i{
+    opacity: 1;
+  }
+`;
 
 const TodoItem = function (props: {
   item: TodoItemInterface,
+  changeCheckedStatus: (param: { id: string, checked: boolean}) => void,
   updateItem: (param: TodoItemInterface) => void,
   deleteItem: (param: string) => void,
 }) {
   const {
     item,
+    changeCheckedStatus,
     updateItem,
     deleteItem,
   } = props;
@@ -41,8 +104,10 @@ const TodoItem = function (props: {
     evt.currentTarget.select();
   };
   const updateItemOnEditing = ({ label = '', type = '' }) => {
-    const { id } = item;
-    setItemOnEditing({ id, label, type });
+    const { id, checked } = item;
+    setItemOnEditing({
+      id, label, type, checked,
+    });
   };
   const handleKeyPressEvt = (evt: any) => {
     if (evt.key !== 'Enter') {
@@ -55,7 +120,7 @@ const TodoItem = function (props: {
     updateItem(itemOnEditing);
   };
   return (
-    <li className={`TodoItem TodoItem--${item.type}`}>
+    <TodoItemContainer className={`TodoItem TodoItem--${item.type}`}>
       {
         isTriggerEditMode
           ? (
@@ -74,10 +139,15 @@ const TodoItem = function (props: {
           : (
             <TodoItemLabel
               data-qa="todo-item-label"
-              onDoubleClick={() => setIsTriggerEditMode(true)}
+              isChecked={item.checked}
             >
               {item.label}
-
+              <TodoItemCheckbox
+                type="checkbox"
+                checked={item.checked}
+                onClick={() => changeCheckedStatus({ id: item.id, checked: !item.checked })}
+              />
+              <TodoItemCheckboxSpan><i><CheckIcon size={16} /></i></TodoItemCheckboxSpan>
             </TodoItemLabel>
           )
       }
@@ -116,7 +186,7 @@ const TodoItem = function (props: {
           </StyledButton>
         </li>
       </menu>
-    </li>
+    </TodoItemContainer>
   );
 };
 
