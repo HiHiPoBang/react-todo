@@ -71,29 +71,35 @@ const TodoView = function () {
     (newTodo) => setTodos([...todos, newTodo]),
   )({ label: 'untitled item', type: 'default' });
   return (
-    <div className="todoView" data-qa="todo-view">
-      {
-        todos.map((todoObj, todoIdx) => (
-          <Todo
-            data-qa={`todo-${todoIdx}`}
-            key={todoObj.todoId}
-            todoId={todoObj.todoId}
-            todo={todoObj.todo}
-            addTodoItem={(val: TodoItemContentInterface) => addTodoItem(val, todoIdx)}
-            updateTodoItem={(val: TodoItemInterface) => updateTodoItem(val, todoIdx)}
-            deleteTodoItem={(val: DeleteTodoItemInterface) => deleteTodoItem(val, todoIdx)}
-            deleteTodo={() => deleteTodo(todoIdx)}
-          />
-        ))
-      }
-      <div>
-        <StyledButton
-          data-qa="add-todo-btn"
-          onClick={addNewTodo}
-        >
-          Add new todo
-        </StyledButton>
-      </div>
+    <div className="TodoView" data-qa="todo-view">
+      <main className="TodoView__main">
+        {
+          todos.map((todoObj, todoIdx) => (
+            <Todo
+              data-qa={`todo-${todoIdx}`}
+              key={todoObj.todoId}
+              todoId={todoObj.todoId}
+              title={todoObj.title}
+              todo={todoObj.todo}
+              addTodoItem={(val: TodoItemContentInterface) => addTodoItem(val, todoIdx)}
+              updateTodoItem={(val: TodoItemInterface) => updateTodoItem(val, todoIdx)}
+              deleteTodoItem={(val: DeleteTodoItemInterface) => deleteTodoItem(val, todoIdx)}
+              deleteTodo={() => deleteTodo(todoIdx)}
+            />
+          ))
+        }
+      </main>
+      <menu className="TodoView__menu">
+        <li>
+          <StyledButton
+            variant="primary"
+            data-qa="add-todo-btn"
+            onClick={addNewTodo}
+          >
+            Add new todo
+          </StyledButton>
+        </li>
+      </menu>
     </div>
   );
 };

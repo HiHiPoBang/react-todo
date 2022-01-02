@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import './Todo.scss';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import { XIcon, PlusIcon } from '@primer/octicons-react';
+import {
+  BORDER_COLOR, SECONDARY_COLOR, H4_FONT_SIZE, convertRemToPixel,
+} from '../../styled-components/commonVariable';
 import { TodoItemInterface, DeleteTodoItemInterface } from './todoUtils';
 import { StyledH2, StyledInput, StyledButton } from '../../styled-components';
 import TodoItem from './TodoItem';
 
+const TodoContainer = styled.div`
+  margin: 5px 10px;
+  width: 20%;
+  min-width: 320px;
+  border: 1px solid ${BORDER_COLOR};
+  background: ${SECONDARY_COLOR};
+`;
+
 const Todo = function (props: {
   todoId: string,
+  title: string,
   todo: TodoItemInterface[],
   addTodoItem: (param: any) => void,
   updateTodoItem: (param: TodoItemInterface) => void,
@@ -14,7 +28,7 @@ const Todo = function (props: {
   deleteTodo: () => void
 }) {
   const {
-    todoId, todo, addTodoItem, updateTodoItem, deleteTodoItem, deleteTodo,
+    todoId, title, todo, addTodoItem, updateTodoItem, deleteTodoItem, deleteTodo,
   } = props;
   const [newItemLabel, setNewItemLabel] = useState('');
   const handleFormBeforeSubmit = (e: any) => {
@@ -23,42 +37,54 @@ const Todo = function (props: {
     setNewItemLabel('');
   };
   return (
-    <div className="Todo" data-qa="todo">
-      <StyledButton
-        data-qa="delete-todo-btn"
-        onClick={() => deleteTodo()}
-      >
-        X
-      </StyledButton>
-      <StyledH2>My Todo</StyledH2>
-      <ul className="Todo__list">
-        { todo.map((item) => (
-          <TodoItem
-            key={item.id}
-            item={item}
-            updateItem={(val: TodoItemInterface) => updateTodoItem(val)}
-            deleteItem={(id: string) => deleteTodoItem({ todoId, id })}
-          />
-        ))}
-      </ul>
-      <form
-        data-qa="todo-form"
-        onSubmit={handleFormBeforeSubmit}
-      >
-        <StyledInput
-          data-qa="add-todo-input"
-          placeholder="Please input new todo"
-          value={newItemLabel}
-          onChange={(event) => setNewItemLabel(event.target.value)}
-        />
+    <TodoContainer className="Todo" data-qa="todo">
+      <header className="Todo__header">
         <StyledButton
-          type="submit"
-          data-qa="add-todo-item-btn"
+          data-qa="delete-todo-btn"
+          className="Todo__deleteBtn"
+          variant="ghost"
+          onClick={() => deleteTodo()}
         >
-          Add
+          <XIcon size={convertRemToPixel(H4_FONT_SIZE)} />
         </StyledButton>
-      </form>
-    </div>
+      </header>
+      <main className="Todo__main">
+        <StyledH2 className="Todo__title">{title}</StyledH2>
+        <ul className="Todo__list">
+          { todo.map((item) => (
+            <TodoItem
+              key={item.id}
+              item={item}
+              updateItem={(val: TodoItemInterface) => updateTodoItem(val)}
+              deleteItem={(id: string) => deleteTodoItem({ todoId, id })}
+            />
+          ))}
+        </ul>
+      </main>
+      <footer className="Todo__footer">
+        <form
+          data-qa="todo-form"
+          className="Todo__form"
+          onSubmit={handleFormBeforeSubmit}
+        >
+          <StyledInput
+            data-qa="add-todo-input"
+            className="Todo__addInput"
+            placeholder="Please input new todo"
+            value={newItemLabel}
+            onChange={(event) => setNewItemLabel(event.target.value)}
+          />
+          <StyledButton
+            variant="primary"
+            disabled={!newItemLabel}
+            type="submit"
+            data-qa="add-todo-item-btn"
+          >
+            <PlusIcon />
+          </StyledButton>
+        </form>
+      </footer>
+    </TodoContainer>
   );
 };
 

@@ -1,10 +1,30 @@
-.TodoList{
-  padding: 15px;
-  width: 20%;
-  border: 1px solid #dddddd;
+.Todo{
+  &__header {
+    position: relative;
+    min-height: 30px;
+    padding: 10px;
+  }
+  &__deleteBtn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+  &__main {
+    padding: 0 15px;
+  }
   &__list {
-    list-style-type: none;
     margin: 0;
+    margin-top: 20px;
     padding: 0;
+    list-style-type: none;
+  }
+  &__footer {
+    padding: 30px 15px;
+  }
+  &__form {
+    display: flex;
+  }
+  &__addInput {
+    flex-grow: 1;
   }
 }
