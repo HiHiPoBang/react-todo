@@ -8,8 +8,8 @@ import {
   PRIMARY_COLOR,
   BORDER_COLOR,
   H6_FONT_SIZE,
-  PRIMARY_FONT_COLOR,
-  SECONDARY_COLOR,
+  REGULAR_FONT_COLOR,
+  SECONDARY_FONT_COLOR,
 } from '../../styled-components/commonVariable';
 import { TodoItemInterface } from './todoUtils';
 import { StyledInput, StyledButton } from '../../styled-components';
@@ -34,7 +34,7 @@ const TodoItemLabel = styled.label`
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: ${H6_FONT_SIZE};
-  color: ${PRIMARY_FONT_COLOR};
+  color: ${(props: CheckedLabelProps) => (props.isChecked ? SECONDARY_FONT_COLOR : REGULAR_FONT_COLOR)};
   &::before {
     content: '';
     position: absolute;
@@ -44,7 +44,6 @@ const TodoItemLabel = styled.label`
     height: 2px;
     background-color: ${BORDER_COLOR};
     opacity: .5;
-    transition: width .3s;
   }
 `;
 const TodoItemInput = styled(StyledInput)`
@@ -145,7 +144,7 @@ const TodoItem = function (props: {
               <TodoItemCheckbox
                 type="checkbox"
                 checked={item.checked}
-                onClick={() => changeCheckedStatus({ id: item.id, checked: !item.checked })}
+                onChange={() => changeCheckedStatus({ id: item.id, checked: !item.checked })}
               />
               <TodoItemCheckboxSpan><i><CheckIcon size={16} /></i></TodoItemCheckboxSpan>
             </TodoItemLabel>

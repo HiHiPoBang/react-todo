@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as R from 'ramda';
 import { nanoid } from 'nanoid';
 import './TodoView.scss';
@@ -26,10 +26,42 @@ const listData = [
 ];
 const todosData = [{ todoId: nanoid(), title: 'Untitled Todo', todo: [...listData] }];
 
+/** CRUD of todoIndexList */
+const getIndexByTodoId = (todos: TodoInterface[], todoId: string) => R.findIndex(R.propEq('todoId', todoId))(todos);
+const createTodoIndexList = (rowNumber: number, todos: TodoInterface[]) => {
+  const getPair = (item: TodoInterface) => R.pair(
+    item.todoId,
+    getIndexByTodoId(todos, item.todoId) % rowNumber,
+  );
+  const list = R.reduce(
+    (acc: [string, number][], item: TodoInterface) => acc.concat([getPair(item)]),
+    [],
+    todos,
+  );
+  return R.fromPairs(list);
+};
+
 /** Render Component */
 const TodoView = function () {
   const [todos, setTodos] = useState(todosData);
   const [rowNumber, setRowNumber] = useState(3);
+  const [todoIndexList, setTodoIndexList] = useState(createTodoIndexList(rowNumber, todos));
+
+  const removeTodoIdKeyFromTodoIndexList = (todoId: string) => {
+    const { [todoId]: removeTodoList, ...restIndexList } = todoIndexList;
+    setTodoIndexList(restIndexList);
+  };
+  const addTodoAtLastInTodoIndexList = (todoId: string) => {
+    const lastValue = R.last(Object.values(todoIndexList)) as number;
+    setTodoIndexList({ ...todoIndexList, [todoId]: (lastValue + 1) % rowNumber });
+  };
+  useEffect(() => {
+    if (todos.length > Object.values(todoIndexList).length) {
+      const lastTodo = R.last(todos) as TodoInterface;
+      const lastTodoId = R.prop('todoId', lastTodo);
+      addTodoAtLastInTodoIndexList(lastTodoId);
+    }
+  }, [todos]);
 
   const changeTodoItemCheckStatus = ({ todoId = '', todoItem = { id: '', checked: false } }) => {
     const { id } = todoItem;
@@ -87,24 +119,25 @@ const TodoView = function () {
   };
   const deleteTodo = ({ todoId = '' as string }) => {
     const todoIdx = findTodoIndexByTodoId(todos, todoId);
-    const todoObj = todos[todoIdx];
     const newTodos = R.remove(todoIdx, 1, todos);
     setTodos(newTodos);
+    removeTodoIdKeyFromTodoIndexList(todoId);
   };
   const addNewTodo = () => R.pipe(
     (param) => createNewTodoItem(param),
     (newItem) => createNewTodo(newItem),
     (newTodo) => setTodos([...todos, newTodo]),
   )({ label: 'untitled item', type: 'default' });
+
   return (
     <div className="TodoView" data-qa="todo-view">
       <main className="TodoView__main">
         {
           Array(rowNumber).fill(0).map((number, idx) => (
-            <div className="TodoView__column" key={number}>
+            <div className="TodoView__column" key={nanoid()}>
               {
-                todos.filter((_, todoIdx) => todoIdx % rowNumber === idx)
-                  .map((todoObj, todoIdx) => (
+                todos.filter((todo: TodoInterface) => todoIndexList[todo.todoId] === idx)
+                  .map((todoObj) => (
                     <Todo
                       key={todoObj.todoId}
                       todoId={todoObj.todoId}

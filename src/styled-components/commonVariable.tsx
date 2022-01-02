@@ -9,7 +9,7 @@ export const GHOST_COLOR = 'rgba(0, 0, 0, 0)';
 
 export const PRIMARY_FONT_COLOR = '#333333';
 export const REGULAR_FONT_COLOR = '#606266';
-export const SECONDARY_TEXT = '#909399';
+export const SECONDARY_FONT_COLOR = '#909399';
 
 export const BORDER_COLOR = '#888888';
 export const BORDER_LIGHT_COLOR = '#DCDFE6';
