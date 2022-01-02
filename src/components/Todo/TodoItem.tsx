@@ -1,5 +1,5 @@
 import './TodoItem.scss';
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { CheckIcon, PencilIcon, TrashIcon } from '@primer/octicons-react';
@@ -18,6 +18,12 @@ const TodoItemLabel = styled.label`
   font-size: ${H6_FONT_SIZE};
   color: ${PRIMARY_FONT_COLOR};
 `;
+const TodoItemInput = styled(StyledInput)`
+  flex-grow: 1;
+  padding: 0 5px;
+  font-size: ${H6_FONT_SIZE};
+`;
+
 const TodoItem = function (props: {
   item: TodoItemInterface,
   updateItem: (param: TodoItemInterface) => void,
@@ -31,6 +37,9 @@ const TodoItem = function (props: {
   const [isTriggerEditMode, setIsTriggerEditMode] = useState(false);
   const [itemOnEditing, setItemOnEditing] = useState(item);
 
+  const handleFocus = (evt: any) => {
+    evt.currentTarget.select();
+  };
   const updateItemOnEditing = ({ label = '', type = '' }) => {
     const { id } = item;
     setItemOnEditing({ id, label, type });
@@ -50,9 +59,11 @@ const TodoItem = function (props: {
       {
         isTriggerEditMode
           ? (
-            <StyledInput
+            <TodoItemInput
               data-qa="todo-item-edit-input"
               value={itemOnEditing.label}
+              autoFocus
+              onFocus={(evt) => handleFocus(evt)}
               onChange={(evt) => updateItemOnEditing({
                 label: evt.target.value, type: itemOnEditing.type,
               })}
